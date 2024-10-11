@@ -10,7 +10,7 @@ A container image is available on
 
 ## SimNIBS
 
-See the main [SimNIBS page)[https://simnibs.github.io/simnibs/build/html/index.html] for
+See the main [SimNIBS page](https://simnibs.github.io/simnibs/build/html/index.html) for
 more information on using SimNIBS, licensing, and citations to include when using SimNIBS.
 
 
