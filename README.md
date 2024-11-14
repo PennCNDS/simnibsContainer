@@ -2,6 +2,8 @@
 
 Containerized SimNIBS, base for Flywheel gear.
 
+This container users SimNIBS 4, and is designed to run the Python workflow. It does not have MATLAB functions.
+
 ## Usage
 
 A container image is available on
