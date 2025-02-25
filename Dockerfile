@@ -49,7 +49,7 @@ RUN mkdir -p /opt/afni-latest \
     --exclude "linux_openmp_64/meica.libs" \
     # Keep only what we use
     && find /opt/afni-latest -type f -not \( \
-        -name "3dRoistats" -or \
+        -name "3dROIstats" -or \
         -name "3dvolreg" \) -delete
 
 
