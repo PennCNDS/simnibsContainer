@@ -28,11 +28,6 @@ COPY docker/files/freesurfer7.4.1-exclude.txt /usr/local/etc/freesurfer7.4.1-exc
 RUN curl -sSL https://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/7.4.1/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz \
      | tar -zxv --no-same-owner -C /opt --exclude-from=/usr/local/etc/freesurfer7.4.1-exclude.txt
 
-# SimNIBS version
-FROM downloader AS simnibs
-RUN curl -sSL https://github.com/simnibs/simnibs/releases/download/v4.1.0/simnibs-4.1.0-cp39-cp39-linux_x86_64.whl \
-     > /opt/simnibs-4.1.0-cp39-cp39-linux_x86_64.whl
-
 # AFNI
 FROM downloader AS afni
 # Bump the date to current to update AFNI
@@ -187,19 +182,12 @@ ENV LANG="C.UTF-8" \
 # Unless otherwise specified each process should only use one thread - nipype
 # will handle parallelization
 ENV MKL_NUM_THREADS=1 \
+    ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=1 \
     OMP_NUM_THREADS=1
-
-# Installing simnibs
-COPY --from=simnibs /opt/simnibs*.whl .
-
-RUN pip install --no-cache-dir $( ls *.whl )
 
 RUN find $HOME -type d -exec chmod go=u {} + && \
     find $HOME -type f -exec chmod go=u {} + && \
     rm -rf $HOME/.npm $HOME/.conda $HOME/.empty
-
-# For detecting the container
-ENV IS_DOCKER_8395080871=1
 
 RUN ldconfig
 WORKDIR /tmp
