@@ -31,7 +31,7 @@ RUN curl -sSL https://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/7.4.1/frees
 # AFNI
 FROM downloader AS afni
 # Bump the date to current to update AFNI
-RUN echo "2023.07.20"
+RUN echo "2024.03.12"
 RUN mkdir -p /opt/afni-latest \
     && curl -fsSL --retry 5 https://afni.nimh.nih.gov/pub/dist/tgz/linux_openmp_64.tgz \
     | tar -xz -C /opt/afni-latest --strip-components 1 \
@@ -41,11 +41,7 @@ RUN mkdir -p /opt/afni-latest \
     --exclude "linux_openmp_64/afnipy" \
     --exclude "linux_openmp_64/lib/RetroTS" \
     --exclude "linux_openmp_64/lib_RetroTS" \
-    --exclude "linux_openmp_64/meica.libs" \
-    # Keep only what we use
-    && find /opt/afni-latest -type f -not \( \
-        -name "3dROIstats" -or \
-        -name "3dvolreg" \) -delete
+    --exclude "linux_openmp_64/meica.libs"
 
 
 # Micromamba
