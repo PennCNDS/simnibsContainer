@@ -18,7 +18,7 @@ Use of the container and these tools is subject to their licensing conditions as
 Usage details to follow. 
 
 A container image is available (but may be outdated) on
-[DockerHub](https://hub.docker.com/repository/docker/cookpa/simnibs/general).
+[DockerHub](https://hub.docker.com/repository/docker/cookpa/cnds-efield).
 
 
 ## SimNIBS
