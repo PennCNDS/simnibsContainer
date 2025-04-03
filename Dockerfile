@@ -1,6 +1,6 @@
 #
 # Dockerfile for SimNIBS with AFNI and FSL flirt
-# Based on simnibs installer but with updated FreeSurfer and SimNIBS
+# Based on fmriprep / simnibs installer but with updated FreeSurfer and SimNIBS
 #
 ARG BASE_IMAGE=ubuntu:jammy
 
@@ -28,12 +28,16 @@ RUN mkdir /opt/tmp \
       && curl -sSL https://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/8.0.0/freesurfer_ubuntu22-8.0.0_amd64.deb > /opt/tmp/freesurfer.deb \
       && dpkg-deb -x /opt/tmp/freesurfer.deb /opt/tmp/freesurfer
 
-COPY docker/files/freesurfer8.0.0-exclude.txt /usr/local/etc/freesurfer8.0.0-exclude.txt 
+COPY docker/files/freesurfer8.0.0-exclude.txt /usr/local/etc/freesurfer8.0.0-exclude.txt
 
 RUN cd /opt/tmp/freesurfer/usr/local \
     && rm -rf $(cat /usr/local/etc/freesurfer8.0.0-exclude.txt) \
     && mv /opt/tmp/freesurfer/usr/local/freesurfer/8.0.0 /opt/freesurfer \
     && rm -rf /opt/tmp
+
+# Patch FS 8.0.0
+# https://surfer.nmr.mgh.harvard.edu/fswiki/ReleaseNotes
+RUN curl -sSL https://raw.githubusercontent.com/freesurfer/freesurfer/refs/heads/dev/scripts/csvprint > /opt/freesurfer/bin/csvprint
 
 # AFNI
 FROM downloader AS afni
@@ -139,17 +143,17 @@ ENV OS="Linux" \
     FSF_OUTPUT_FORMAT="nii.gz" \
     FREESURFER="/opt/freesurfer"
 ENV FREESURFER_HOME="${FREESURFER}" \
-    FREESURFER_HOME_FSPYTHON="${FREESURFER}" \
-    SUBJECTS_DIR="$FREESURFER_HOME/subjects" \
-    FUNCTIONALS_DIR="$FREESURFER_HOME/sessions" \
-    MNI_DIR="$FREESURFER_HOME/mni" \
-    LOCAL_DIR="$FREESURFER_HOME/local" \
-    MINC_BIN_DIR="$FREESURFER_HOME/mni/bin" \
-    MINC_LIB_DIR="$FREESURFER_HOME/mni/lib" \
-    MNI_DATAPATH="$FREESURFER_HOME/mni/data"
+    FREESURFER_HOME_FSPYTHON="${FREESURFER}"
+ENV SUBJECTS_DIR="${FREESURFER_HOME}/subjects" \
+    FUNCTIONALS_DIR="${FREESURFER_HOME}/sessions" \
+    MNI_DIR="${FREESURFER_HOME}/mni" \
+    LOCAL_DIR="${FREESURFER_HOME}/local" \
+    MINC_BIN_DIR="${FREESURFER_HOME}/mni/bin" \
+    MINC_LIB_DIR="${FREESURFER_HOME}/mni/lib" \
+    MNI_DATAPATH="${FREESURFER_HOME}/mni/data"
 ENV PERL5LIB="$MINC_LIB_DIR/perl5/5.8.5" \
     MNI_PERL5LIB="$MINC_LIB_DIR/perl5/5.8.5" \
-    PATH="$FREESURFER_HOME/bin:$FREESURFER_HOME/tktools:$MINC_BIN_DIR:$PATH"
+    PATH="${FREESURFER_HOME}/bin:${FREESURFER_HOME}/tktools:$MINC_BIN_DIR:$PATH"
 
 # AFNI config
 ENV PATH="/opt/afni-latest:$PATH" \
