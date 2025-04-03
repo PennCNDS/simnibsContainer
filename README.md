@@ -6,7 +6,7 @@ This container users SimNIBS 4, and is designed to run the Python workflow. It d
 
 Other preprocessing is are provided by:
 
-* [FreeSurfer 7.4.1](https://surfer.nmr.mgh.harvard.edu)
+* [FreeSurfer 8.0.0](https://surfer.nmr.mgh.harvard.edu) (with `csvprint` patch)
 * [flirt (FSL)](https://fsl.fmrib.ox.ac.uk)
 * [AFNI](https://afni.nimh.nih.gov)
 
@@ -15,7 +15,7 @@ Use of the container and these tools is subject to their licensing conditions as
 
 ## Usage
 
-Usage details to follow. 
+Usage details to follow.
 
 A container image is available (but may be outdated) on
 [DockerHub](https://hub.docker.com/repository/docker/cookpa/cnds-efield).
