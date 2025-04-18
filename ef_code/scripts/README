@@ -3,16 +3,16 @@ README:
 
 -In order to run the full pipeline,the main wrapper is ef_pipeline.
 
--To start, get the bids directory in the format filestructure listed in 
+-To start, get the bids directory in the format filestructure listed in
 
 -To call after organzation of bids
-    ef_pipeline --bids_dir $PATH_TO_BIDS --sub $SUBJECT --ses $SESSION --fs_LICENSE $PATH_TO_FREESURFER_LICENSE
+    ef_pipeline --bids_dir $PATH_TO_BIDS --sub $SUBJECT --ses $SESSION --fs_lic $PATH_TO_FREESURFER_LICENSE
 
      -This will run the whole pipeline from the T1,T2 NIFTI to the output Efield
      -If $SUBJECT and $SESSION arent listed, runs through all available rawdata in the bids_dir
--Check the QA folder in the derivatives folder to check the headmodel and perhaps registration 
+-Check the QA folder in the derivatives folder to check the headmodel and perhaps registration
 -If a rerun is necessary using AFNI registration for headmodel
-	ef_pipeline --bids_dir $PATH_TO_BIDS --sub $SUBJECT --ses $SESSION --fs_LICENSE $PATH_TO_FREESURFER_LICENSE --rerun
+	ef_pipeline --bids_dir $PATH_TO_BIDS --sub $SUBJECT --ses $SESSION --fs_lic $PATH_TO_FREESURFER_LICENSE --rerun
 
 -ef_pipeline is wrapper for the steps
 1)check_bids_dir: Checks the Bids directory and runs freesurfer if not found
@@ -21,7 +21,7 @@ README:
 4)gather_ef_over_simulation: Gather Ebrain and Freesurfer roi EF values for the simulations RUL/BT
 
 
--If invididual steps need to be run the same inputs can be done e.g. 
-check_bids_dir --bids_dir $PATH_TO_BIDS --sub $SUBJECT --ses $SESSION --fs_LICENSE $PATH_TO_FREESURFER_LICENSE 
+-If invididual steps need to be run the same inputs can be done e.g.
+check_bids_dir --bids_dir $PATH_TO_BIDS --sub $SUBJECT --ses $SESSION --fs_lic $PATH_TO_FREESURFER_LICENSE
 
 
