@@ -214,4 +214,9 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
 
 WORKDIR /home/simnibs
 
+# Copy efield scripts
+COPY ef_code /opt/ef_code
+
+ENV PATH=/opt/ef_code/bin:$PATH
+
 ENTRYPOINT ["/bin/bash"]
