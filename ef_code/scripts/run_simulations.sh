@@ -2,7 +2,7 @@
 # $Id: create_headmodel 1.0 03-06-2025  jupston $
 PRINT_USAGE() {
 #WHAT IS THE USAGE OF THE PROGRAM
-echo 'USAGES:Creates a simnibs4.1 headmodel from charm' 
+echo 'USAGES:Creates a simnibs4.1 headmodel from charm'
 }
 
 PRINT_HELP() {
@@ -11,15 +11,15 @@ PRINT_HELP() {
   echo 'Uses SIMNIBS4.1 to create headmodel. Due to the possible misregistrations a flirt is run during it, in case needs to be rerun.
 
 USAGE (depending on options):
-  create_heamodel [options]  
+  create_heamodel [options]
 
 OPTIONS:
  -h, --help     Print this help.
  -b, --bids_dir Bids directory, can be the local or the full path to it
- -s, --sub     The subject name 
+ -s, --sub     The subject name
  -v, --ses      The session(visit) number
  --rerun        Reruns the headmodel charm using the Flirt registration or the registration matrix set in the corresponding subject folder
- 
+
 
 
 
@@ -120,7 +120,7 @@ LONG=bids_dir:,sub:,ses:,version,rerun
 options=$(getopt --options $SHORT --longoptions $LONG --name "$(basename 0)" -- "$@")
 eval set -- "$options"
 
-#DEFAULTS 
+#DEFAULTS
 #######EDIT HERE##########################################
 
 fs_ver=7.4.2
@@ -145,11 +145,11 @@ while true ; do
         --rerun)
                 rerun="Y"
                 shift ;;
-	--) 
-		shift 
+	--)
+		shift
 		break;;
-	*)	
-		echo "Unknown parameter $KEY! Exiting";exit 1;; 
+	*)
+		echo "Unknown parameter $KEY! Exiting";exit 1;;
         esac
 done
 echo $sub
@@ -178,16 +178,16 @@ sub_ses_simnibs=$bids_dir/derivatives/Simnibs4.1/sub-${sub}_ses-${ses}
 
 m2m_folder=$sub_ses_simnibs/m2m_$sub
 
-#RUL simulation 
+#RUL simulation
 elec1='FT8'
 elec2='C2'
 outfolder=$sub_ses_simnibs/simnibs_sim_RUL
-simulation_simnibs $sub $m2m_folder $outfolder $elec1 $elec2 
+simulation_simnibs $sub $m2m_folder $outfolder $elec1 $elec2
 
 
-#BT simulation 
+#BT simulation
 elec1='FT8'
 elec2='FT7'
 outfolder=$sub_ses_simnibs/simnibs_sim_BT
-simulation_simnibs $sub $m2m_folder $outfolder $elec1 $elec2 
+simulation_simnibs $sub $m2m_folder $outfolder $elec1 $elec2
 
