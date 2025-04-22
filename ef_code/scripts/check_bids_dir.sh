@@ -3,7 +3,7 @@
 
 PRINT_USAGE() {
 #WHAT IS THE USAGE OF THE PROGRAM
-echo 'USAGES:Checks the bids dir else it errors out' 
+echo 'USAGES:Checks the bids dir else it errors out'
 }
 
 PRINT_HELP() {
@@ -12,12 +12,12 @@ PRINT_HELP() {
   echo 'Uses bash scripting to check if all files the T1w,T2w and if freesurfer is run and make sure it is 7.4.2
 
 USAGE (depending on options):
-  check_bids_dir [options]  
+  check_bids_dir [options]
 
 OPTIONS:
  -h, --help     Print this help.
  -b, --bids_dir Bids directory, can be the local or the full path to it
- -s, --sub     The subject name 
+ -s, --sub     The subject name
  -v, --ses      The session(visit) number
  -f, --fs_lic   The freesurfer license file
 
@@ -48,18 +48,17 @@ args=$@
 #	PRINT_USAGE;exit
 #fi
 
+nthreads=1
 
-
-SHORT=hs:v:b:f:
-LONG=bids_dir:,sub:,ses:,version,fs_lic:
+SHORT=hs:v:b:f:t:
+LONG=bids_dir:,sub:,ses:,version,fs_lic:,threads:
 options=$(getopt --options $SHORT --longoptions $LONG --name "$(basename 0)" -- "$@")
 eval set -- "$options"
 
-#DEFAULTS 
+#DEFAULTS
 #######EDIT HERE##########################################
 
 fs_ver=8.0
-
 
 while true ; do
     case "$1" in
@@ -80,11 +79,14 @@ while true ; do
         -f | --fs_lic)
 		fs_lic=$2
 		shift 2;;
-	--) 
-		shift 
+    -t | --threads)
+        nthreads=$2
+        shift 2;;
+	--)
+		shift
 		break;;
-	*)	
-		echo "Unknown parameter $KEY! Exiting";exit 1;; 
+	*)
+		echo "Unknown parameter $KEY! Exiting";exit 1;;
         esac
 done
 
@@ -127,7 +129,7 @@ fi
 if [ ! -f $FREESURFER_HOME/license.txt ];then
 	cp $fs_lic $FREESURFER_HOME/license.txt
 fi
- #Check for version 
+ #Check for version
 
 
 fs_dir=$bids_dir/derivatives/freesurfer
@@ -139,14 +141,15 @@ export SUBJECTS_DIR=$fs_dir
 if echo "$vz" | grep -q "$fs_ver"; then
   echo "Freesurfer built on $fs_ver, found for sub-${sub}_ses-${ses}"
   #Make sure it has the final aparc+aseg
-  if [ ! -f $fs_dir/sub-${sub}_ses-${ses}/label/aparc+aseg.mgz ];then
+  if [ ! -f $fs_dir/sub-${sub}_ses-${ses}/mri/aparc+aseg.mgz ];then
    echo "Freesurfer didnt seem to finish so rerunning"
-   rm -r $fs_dir/sub-${sub}_ses-${ses} 
-   recon-all -s sub-${sub}_ses-${ses} -sd $fs_dir -i $anat_dir/sub-${sub}_ses-${ses}_T1w.nii.gz -i $anat_dir/sub-${sub}_ses-${ses}_T2w.nii.gz -all 
+   rm -r $fs_dir/sub-${sub}_ses-${ses}
+   recon-all -s sub-${sub}_ses-${ses} -sd $fs_dir -i $anat_dir/sub-${sub}_ses-${ses}_T1w.nii.gz \
+       -i $anat_dir/sub-${sub}_ses-${ses}_T2w.nii.gz -all -threads $nthreads
   fi
 
 else
   echo "Not found freesurfer $fs_ver run for sub-${sub}_ses-${ses} "
   echo "Therefore running a new run of freesurfer"
-  recon-all -s sub-${sub}_ses-${ses} -sd $fs_dir -i $anat_dir/sub-${sub}_ses-${ses}_T1w.nii.gz -all
-fi 
+  recon-all -s sub-${sub}_ses-${ses} -sd $fs_dir -i $anat_dir/sub-${sub}_ses-${ses}_T1w.nii.gz -all -threads $nthreads
+fi
