@@ -9,7 +9,7 @@ echo 'USAGES:Checks the bids dir else it errors out'
 PRINT_HELP() {
 #LIST ALL THAT YOU WANT THE USER TO KNOW
   echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
-  echo 'Uses bash scripting to check if all files the T1w,T2w and if freesurfer is run and make sure it is 7.4.2
+  echo 'Uses bash scripting to check if all files the T1w,T2w and if freesurfer is run and make sure it is the freesurfer version 8.0
 
 USAGE (depending on options):
   check_bids_dir [options]
@@ -20,7 +20,7 @@ OPTIONS:
  -s, --sub     The subject name
  -v, --ses      The session(visit) number
  -f, --fs_lic   The freesurfer license file
-
+ --fs_threads  The number of threads to use for freesurfer
 
 
 DESCRIPTION:
@@ -48,10 +48,10 @@ args=$@
 #	PRINT_USAGE;exit
 #fi
 
-nthreads=1
+fs_threads=1
 
-SHORT=hs:v:b:f:t:
-LONG=bids_dir:,sub:,ses:,version,fs_lic:,threads:
+SHORT=hs:v:b:f:
+LONG=bids_dir:,sub:,ses:,version,fs_lic:,fs_threads:
 options=$(getopt --options $SHORT --longoptions $LONG --name "$(basename 0)" -- "$@")
 eval set -- "$options"
 
@@ -60,6 +60,7 @@ eval set -- "$options"
 
 fs_ver=8.0
 
+
 while true ; do
     case "$1" in
 	-h | --help)
@@ -67,7 +68,7 @@ while true ; do
 	--version)
 		echo "$Id";exit;;
 	######EDIT HERE
-	--bids_dir)
+	-b | --bids_dir)
 		bids_dir="$2"
 		shift 2;;
 	-s | --sub)
@@ -79,9 +80,9 @@ while true ; do
         -f | --fs_lic)
 		fs_lic=$2
 		shift 2;;
-    -t | --threads)
-        nthreads=$2
-        shift 2;;
+    --fs_threads)
+        fs_threads=$2
+		shift 2;;
 	--)
 		shift
 		break;;
@@ -145,11 +146,11 @@ if echo "$vz" | grep -q "$fs_ver"; then
    echo "Freesurfer didnt seem to finish so rerunning"
    rm -r $fs_dir/sub-${sub}_ses-${ses}
    recon-all -s sub-${sub}_ses-${ses} -sd $fs_dir -i $anat_dir/sub-${sub}_ses-${ses}_T1w.nii.gz \
-       -i $anat_dir/sub-${sub}_ses-${ses}_T2w.nii.gz -all -threads $nthreads
+       -i $anat_dir/sub-${sub}_ses-${ses}_T2w.nii.gz -all -threads $fs_threads
   fi
 
 else
   echo "Not found freesurfer $fs_ver run for sub-${sub}_ses-${ses} "
   echo "Therefore running a new run of freesurfer"
-  recon-all -s sub-${sub}_ses-${ses} -sd $fs_dir -i $anat_dir/sub-${sub}_ses-${ses}_T1w.nii.gz -all -threads $nthreads
+  recon-all -s sub-${sub}_ses-${ses} -sd $fs_dir -i $anat_dir/sub-${sub}_ses-${ses}_T1w.nii.gz -all -threads $fs_threads
 fi

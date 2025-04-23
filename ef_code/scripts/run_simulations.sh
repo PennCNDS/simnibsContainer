@@ -1,24 +1,23 @@
 #!/bin/bash
-# $Id: create_headmodel 1.0 03-06-2025  jupston $
+# $Id: run_simulations 1.0 03-06-2025  jupston $
 PRINT_USAGE() {
 #WHAT IS THE USAGE OF THE PROGRAM
-echo 'USAGES:Creates a simnibs4.1 headmodel from charm'
+echo 'USAGES:Runs through RUL and BT ECT simulations'
 }
 
 PRINT_HELP() {
 #LIST ALL THAT YOU WANT THE USER TO KNOW
   echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
-  echo 'Uses SIMNIBS4.1 to create headmodel. Due to the possible misregistrations a flirt is run during it, in case needs to be rerun.
+  echo 'Uses Simnibs to create RUL and BT ECT simulations ran at 800 mA
 
 USAGE (depending on options):
-  create_heamodel [options]
+  run_simulations [options]
 
 OPTIONS:
  -h, --help     Print this help.
  -b, --bids_dir Bids directory, can be the local or the full path to it
  -s, --sub     The subject name
  -v, --ses      The session(visit) number
- --rerun        Reruns the headmodel charm using the Flirt registration or the registration matrix set in the corresponding subject folder
 
 
 
@@ -116,15 +115,13 @@ args=$@
 
 
 SHORT=hs:v:b:
-LONG=bids_dir:,sub:,ses:,version,rerun
+LONG=bids_dir:,sub:,ses:,version
 options=$(getopt --options $SHORT --longoptions $LONG --name "$(basename 0)" -- "$@")
 eval set -- "$options"
 
 #DEFAULTS
 #######EDIT HERE##########################################
 
-fs_ver=7.4.2
-rerun="N"
 
 while true ; do
     case "$1" in
@@ -133,7 +130,7 @@ while true ; do
 	--version)
 		echo "$Id";exit;;
 	######EDIT HERE
-	--bids_dir)
+	-b | --bids_dir)
 		bids_dir="$2"
 		shift 2;;
 	-s | --sub)
@@ -142,9 +139,6 @@ while true ; do
         -v | --ses)
                 ses=$2
 		shift 2;;
-        --rerun)
-                rerun="Y"
-                shift ;;
 	--)
 		shift
 		break;;
