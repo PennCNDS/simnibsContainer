@@ -188,12 +188,6 @@ ENV LANG="C.UTF-8" \
     FSLREMOTECALL="" \
     FSLGECUDAQ="cuda.q"
 
-# Unless otherwise specified each process should only use one thread - nipype
-# will handle parallelization
-ENV MKL_NUM_THREADS=1 \
-    ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=1 \
-    OMP_NUM_THREADS=1
-
 RUN find $HOME -type d -exec chmod go=u {} + && \
     find $HOME -type f -exec chmod go=u {} + && \
     rm -rf $HOME/.npm $HOME/.conda $HOME/.empty

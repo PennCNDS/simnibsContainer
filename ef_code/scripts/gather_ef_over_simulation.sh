@@ -1,25 +1,24 @@
 #!/bin/bash
-# $Id: create_headmodel 1.0 03-06-2025  jupston $
+# $Id: gather_ef_over_simulation 1.0 03-06-2025  jupston $
 PRINT_USAGE() {
 #WHAT IS THE USAGE OF THE PROGRAM
-echo 'USAGES:Creates a simnibs4.1 headmodel from charm' 
+echo 'USAGES:Generates the Output from Simnibs simulations'
 }
 
 PRINT_HELP() {
 #LIST ALL THAT YOU WANT THE USER TO KNOW
   echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
-  echo 'Uses SIMNIBS4.1 to create headmodel. Due to the possible misregistrations a flirt is run during it, in case needs to be rerun.
+  echo 'Gather average ef over freesurfer aparc aseg regions for all Simnibs simulations. Also gathers the 90th percentile EF over the brain(Ebrain) for all Simnibs simulations.
 
 USAGE (depending on options):
-  create_heamodel [options]  
+  gather_ef_over_simulation [options]
 
 OPTIONS:
  -h, --help     Print this help.
  -b, --bids_dir Bids directory, can be the local or the full path to it
- -s, --sub     The subject name 
+ -s, --sub     The subject name
  -v, --ses      The session(visit) number
- --rerun        Reruns the headmodel charm using the Flirt registration or the registration matrix set in the corresponding subject folder
- 
+
 
 
 
@@ -52,15 +51,13 @@ args=$@
 
 
 SHORT=hs:v:b:
-LONG=bids_dir:,sub:,ses:,version,rerun
+LONG=bids_dir:,sub:,ses:,version
 options=$(getopt --options $SHORT --longoptions $LONG --name "$(basename 0)" -- "$@")
 eval set -- "$options"
 
-#DEFAULTS 
+#DEFAULTS
 #######EDIT HERE##########################################
 
-fs_ver=7.4.2
-rerun="N"
 
 while true ; do
     case "$1" in
@@ -69,7 +66,7 @@ while true ; do
 	--version)
 		echo "$Id";exit;;
 	######EDIT HERE
-	--bids_dir)
+	-b | --bids_dir)
 		bids_dir="$2"
 		shift 2;;
 	-s | --sub)
@@ -78,14 +75,11 @@ while true ; do
         -v | --ses)
                 ses=$2
 		shift 2;;
-        --rerun)
-                rerun="Y"
-                shift ;;
-	--) 
-		shift 
+	--)
+		shift
 		break;;
-	*)	
-		echo "Unknown parameter $KEY! Exiting";exit 1;; 
+	*)
+		echo "Unknown parameter $KEY! Exiting";exit 1;;
         esac
 done
 
@@ -167,5 +161,5 @@ done
 
 
 
-    
+
 

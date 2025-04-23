@@ -3,24 +3,24 @@
 
 PRINT_USAGE() {
 #WHAT IS THE USAGE OF THE PROGRAM
-echo 'USAGES:Creates a simnibs4.1 headmodel from charm' 
+echo 'USAGES:Creates a simnibs4.1 headmodel from charm'
 }
 
 PRINT_HELP() {
 #LIST ALL THAT YOU WANT THE USER TO KNOW
   echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
-  echo 'Uses SIMNIBS4.1 to create headmodel. Due to the possible misregistrations a flirt is run during it, in case needs to be rerun.
+  echo 'Uses SIMNIBS4.1 to create headmodel. Due to the possible misregistrations a AFNI 3dAllineate is run during it, in case needs to be rerun.
 
 USAGE (depending on options):
-  create_heamodel [options]  
+  create_heamodel [options]
 
 OPTIONS:
  -h, --help     Print this help.
  -b, --bids_dir Bids directory, can be the local or the full path to it
- -s, --sub     The subject name 
+ -s, --sub     The subject name
  -v, --ses      The session(visit) number
  --rerun        Reruns the headmodel charm using the Flirt registration or the registration matrix set in the corresponding subject folder
- 
+
 
 
 
@@ -56,10 +56,9 @@ LONG=bids_dir:,sub:,ses:,version,rerun
 options=$(getopt --options $SHORT --longoptions $LONG --name "$(basename 0)" -- "$@")
 eval set -- "$options"
 
-#DEFAULTS 
+#DEFAULTS
 #######EDIT HERE##########################################
 
-fs_ver=7.4.2
 rerun="N"
 
 while true ; do
@@ -69,7 +68,7 @@ while true ; do
 	--version)
 		echo "$Id";exit;;
 	######EDIT HERE
-	--bids_dir)
+	-b | --bids_dir)
 		bids_dir="$2"
 		shift 2;;
 	-s | --sub)
@@ -81,11 +80,11 @@ while true ; do
         --rerun)
                 rerun="Y"
                 shift ;;
-	--) 
-		shift 
+	--)
+		shift
 		break;;
-	*)	
-		echo "Unknown parameter $KEY! Exiting";exit 1;; 
+	*)
+		echo "Unknown parameter $KEY! Exiting";exit 1;;
         esac
 done
 
@@ -124,8 +123,8 @@ if [[ -z "$SIMNIBS_BIN" ]];then
 SIMNIBS_BIN=`which charm`
 SIMNIBS_BIN="$( dirname "$SIMNIBS_BIN" )"
 fi
-#Find the afni registration 
-#If the transform is there dont rerun 
+#Find the afni registration
+#If the transform is there dont rerun
 if [ ! -f $anat_deriv/MNI2Conform12.txt ];then
    MNI_template=$SIMNIBS_BIN/../lib/python3.9/site-packages/simnibs/resources/templates/MNI152_T1_1mm.nii.gz
    cd $anat_deriv
@@ -134,12 +133,12 @@ if [ ! -f $anat_deriv/MNI2Conform12.txt ];then
    3dAllineate -base $MNI_template -input sub-${sub}_ses-${ses}_T1w_deobq.nii.gz -1Dmatrix_save 12param
    echo "-1 0 0 0 0 -1 0 0 0 0 1 0" > AFNI_to_SPM.txt
    cat_matvec -ONELINE AFNI_to_SPM.txt 12param.aff12.1D AFNI_to_SPM.txt -4x4 > MNI2Conform12.txt
-   charm AFNI_rerun $T1 --initatlas --forceqform --usetransform MNI2Conform12.txt 
-   cp m2m_AFNI_rerun/charm_report.html $qa_deriv/AFNI_rerun_registration_check.html    
+   charm AFNI_rerun $T1 --initatlas --forceqform --usetransform MNI2Conform12.txt
+   cp m2m_AFNI_rerun/charm_report.html $qa_deriv/AFNI_rerun_registration_check.html
    cd -
 fi
 
-#Start the charm 
+#Start the charm
 cd $sub_ses_simnibs
 if [ $rerun == "Y" ]; then
   rm -r simnibs_sim_*
@@ -147,11 +146,11 @@ if [ $rerun == "Y" ]; then
     warning_echo "MNI2Conform12.txt not found in $sub_ses_simnibs. Using AFNI $anat_deriv/MNI2Conform12.txt"
     cp $anat_deriv/MNI2Conform12.txt MNI2Conform12.txt
  fi
-  
+
  charm $sub $T1 $T2 --fs-dir $sub_ses_fs_dir --forceqform --usetransform MNI2Conform12.txt --forcerun
  cp m2m_$sub/charm_report.html $qa_deriv/charm_report.html
 
-else 
+else
     charm $sub $T1 $T2 --fs-dir $sub_ses_fs_dir --forceqform
     cp m2m_$sub/charm_report.html $qa_deriv/charm_report.html
 
