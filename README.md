@@ -12,13 +12,29 @@ Other preprocessing is are provided by:
 
 Use of the container and these tools is subject to their licensing conditions as documented at their respective sites. A FreeSurfer License file will be required at run time for all FreeSurfer operations.
 
+A container image is available at
+[DockerHub](https://hub.docker.com/repository/docker/cookpa/cnds-efield).
+
 
 ## Usage
 
-Usage details to follow.
+From within the container:
 
-A container image is available (but may be outdated) on
-[DockerHub](https://hub.docker.com/repository/docker/cookpa/cnds-efield).
+```bash
+ef_pipeline --bids_dir $PATH_TO_BIDS --sub $SUBJECT --ses $SESSION --fs_lic $PATH_TO_FREESURFER_LICENSE
+```
+
+or
+
+```bash
+ef_pipeline --help
+```
+
+### Input structure
+
+The `--bids_dir` argument is not actually a BIDS dataset, but rather a path to a directory
+containing a BIDS dataset called "rawdata". A directory "derivatives" will be created
+alongside it.
 
 
 ## SimNIBS
