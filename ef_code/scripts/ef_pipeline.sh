@@ -14,7 +14,11 @@
 PRINT_HELP() {
 #LIST ALL THAT YOU WANT THE USER TO KNOW
   echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
-  echo 'Uses bash scripting to run entire pipeline. Runs freesurfer if needed, Creates a head model from charm in Simnibs4.1, Simulate RUL and BT ECT at 800mA, and gather outputs for these simulations
+  echo 'Uses bash scripting to run entire pipeline. Runs freesurfer if needed.'
+  echo 'Creates a head model from charm in Simnibs4.1, Simulate RUL and BT ECT'
+  echo 'at 800mA, and gather outputs for these simulations.'
+
+echo '
 
 USAGE (depending on options):
   ef_pipeline [options]
@@ -32,10 +36,41 @@ OPTIONS:
 
 DESCRIPTION:
 
+The input bids_dir should be a path to a directory that contains the input
+data. bids_dir must contain a BIDS dataset called "rawdata". A derivatives
+directory will be created alongside it. For example, given input
+
+    bids_dir/
+    └── rawdata/
+        └── sub-<subj>/
+            └── ses-<ses>/
+                └── anat/
+                    ├── sub-<subj>_ses-<ses>_T1w.nii.gz
+                    └── sub-<subj>_ses-<ses>_T2w.nii.gz
+
+the following output will be generated:
+
+    bids_dir/
+    └── derivatives/
+        ├── Efield_Output/
+        │   └── sub-<subj>_ses-<ses>/
+        │       ├── ef_summary.csv
+        │       └── fs_ef.csv
+        ├── qa/
+        |    └── sub-<subj>_ses-<ses>/
+        ├── Simnibs4.1/
+        │   └── sub-<subj>_ses-<ses>/
+        ├── anat/
+        │   └── sub-<subj>_ses-<ses>/
+        └── freesurfer/
+            └── sub-<subj>_ses-<ses>/
+
+
 KNOWN ISSUES:
 
 AUTHORS:
-	Joel Upston'
+	Joel Upston
+'
 echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
 }
 SOURCE="$0"
@@ -51,7 +86,7 @@ source $script_dir/bash_util.sh
 args=$@
 
 SHORT=hs:v:b:f:
-LONG=bids_dir:,sub:,ses:,version,fs_lic:,fs_threads:,rerun
+LONG=bids_dir:,fs_lic:,fs_threads:,help,rerun,ses:,sub:,version
 
 fs_threads=1 # Default number of threads
 
@@ -92,7 +127,7 @@ while true ; do
 		break;;
 	*)
 		echo "Unknown parameter $KEY! Exiting";exit 1;;
-        esac
+    esac
 done
 
 if [[ -z $sub  ||  -z $ses  ||  -z $bids_dir ]];then
