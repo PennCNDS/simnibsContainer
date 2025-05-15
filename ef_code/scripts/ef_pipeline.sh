@@ -161,7 +161,7 @@ for sub_dir in $bids_dir/rawdata/sub-$subj*;do
 
         #Check if freesurfer for subect is already in directory
         #If yes check the version of it
-        pretty_echo "Check the bids dir $bid_dir for sub-$sub ses-$ses" |& tee $qa_deriv/EF_pipeline.log
+        pretty_echo "Check the bids dir $bid_dir for sub-$sub ses-$ses and run recon-all if needed" |& tee $qa_deriv/EF_pipeline.log
 
         check_bids_dir --bids_dir $bids_dir --sub $sub --ses $ses --fs_lic $fs_lic --fs_threads $fs_threads |& tee $qa_deriv/Bids_Dir_Checking_and_FreeSurfer.log
 	    cat $qa_deriv/Bids_Dir_Checking_and_FreeSurfer.log >> $qa_deriv/EF_pipeline.log
