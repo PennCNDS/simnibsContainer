@@ -42,19 +42,16 @@ RUN curl -sSL https://raw.githubusercontent.com/freesurfer/freesurfer/refs/heads
 # AFNI
 FROM downloader AS afni
 # Bump the date to current to update AFNI
+# We only include a few AFNI programs
 RUN echo "2024.03.12"
-RUN mkdir -p /opt/afni-latest \
-    && curl -fsSL --retry 5 https://afni.nimh.nih.gov/pub/dist/tgz/linux_openmp_64.tgz \
+RUN mkdir -p /opt/afni-latest && \
+    curl -fsSL --retry 5 https://afni.nimh.nih.gov/pub/dist/tgz/linux_openmp_64.tgz \
     | tar -xz -C /opt/afni-latest --strip-components 1 \
-    --exclude "linux_openmp_64/*.gz" \
-    --exclude "linux_openmp_64/funstuff" \
-    --exclude "linux_openmp_64/shiny" \
-    --exclude "linux_openmp_64/afnipy" \
-    --exclude "linux_openmp_64/lib/RetroTS" \
-    --exclude "linux_openmp_64/lib_RetroTS" \
-    --exclude "linux_openmp_64/meica.libs"
-
-
+        linux_openmp_64/3dROIstats \
+        linux_openmp_64/3dWarp \
+        linux_openmp_64/3dAllineate \
+        linux_openmp_64/3dBrickStat \
+        linux_openmp_64/cat_matvec
 # Micromamba
 FROM downloader AS micromamba
 
