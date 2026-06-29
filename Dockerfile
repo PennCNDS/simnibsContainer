@@ -51,6 +51,14 @@ RUN mkdir -p /opt/afni-latest && \
         linux_openmp_64/3dWarp \
         linux_openmp_64/3dAllineate \
         linux_openmp_64/3dBrickStat \
+        linux_openmp_64/1dtranspose \
+        linux_openmp_64/3dAFNItoNIFTI \
+        linux_openmp_64/3dWarpDrive \
+        linux_openmp_64/3dZeropad \
+        linux_openmp_64/3dcalc \
+        linux_openmp_64/3dcopy \
+        linux_openmp_64/3drefit \
+        linux_openmp_64/3drename \
         linux_openmp_64/cat_matvec
 # Micromamba
 FROM downloader AS micromamba

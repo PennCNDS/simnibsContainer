@@ -101,7 +101,6 @@ freesurfer/8.0.0/average/Yeo_JNeurophysiol11_MNI152
 freesurfer/8.0.0/DefectLUT.txt
 freesurfer/8.0.0/diffusion
 freesurfer/8.0.0/docs/xml
-freesurfer/8.0.0/fsfast
 freesurfer/8.0.0/lib/bem/ic0.tri
 freesurfer/8.0.0/lib/bem/ic1.tri
 freesurfer/8.0.0/lib/bem/ic2.tri
