@@ -32,16 +32,23 @@ AUTHORS:
 	Joel Upston'
 echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
 }
-SOURCE="$0"
-tmp_link="$( readlink "$SOURCE" )"
-SOURCE="$( dirname "$SOURCE" )"
-if [[ ! $tmp_link = /* ]];then
-	tmp_link=$SOURCE/$tmp_link
+SOURCE="${BASH_SOURCE[0]:-$0}"
+if [[ "$SOURCE" != */* ]]; then
+    SOURCE="$(command -v -- "$SOURCE" || printf '%s' "$SOURCE")"
 fi
+while [[ -L "$SOURCE" ]]; do
+    script_dir="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
+    tmp_link="$(readlink "$SOURCE")"
+    if [[ "$tmp_link" = /* ]]; then
+        SOURCE="$tmp_link"
+    else
+        SOURCE="$script_dir/$tmp_link"
+    fi
+done
 
 #source j_bash_util
 #LINK TO THE SCRIPT SO FIND DIRECTORY
-script_dir="$( dirname "$tmp_link" )"
+script_dir="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
 
 args=$@
 
@@ -155,5 +162,4 @@ else
     cp m2m_$sub/charm_report.html $qa_deriv/charm_report.html
 
 fi
-
 

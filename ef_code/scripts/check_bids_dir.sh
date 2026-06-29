@@ -116,13 +116,13 @@ if [ -f $anat_dir/sub-${sub}_ses-${ses}_T1w.nii.gz ];then
 	echo T1 is found. Using $anat_dir/sub-${sub}_ses-${ses}_T1w.nii.gz
 else
 	echo "T1 was not found, looking under name $anat_dir/sub-${sub}_ses-${ses}_T1w.nii.gz"
-	exit
+	exit 1
 fi
 if [ -f $anat_dir/sub-${sub}_ses-${ses}_T2w.nii.gz ];then
 	echo T2 is found. Using $anat_dir/sub-${sub}_ses-${ses}_T2w.nii.gz
 else
 	echo "T2 was not found, looking under name $anat_dir/sub-${sub}_ses-${ses}_T2w.nii.gz"
-	exit
+	exit 1
 fi
 
 #Check for Freesurfer
