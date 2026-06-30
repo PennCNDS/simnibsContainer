@@ -73,15 +73,22 @@ AUTHORS:
 '
 echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
 }
-SOURCE="$0"
-tmp_link="$( readlink "$SOURCE" )"
-SOURCE="$( dirname "$SOURCE" )"
-if [[ ! $tmp_link = /* ]];then
-	tmp_link=$SOURCE/$tmp_link
+SOURCE="${BASH_SOURCE[0]:-$0}"
+if [[ "$SOURCE" != */* ]]; then
+    SOURCE="$(command -v -- "$SOURCE" || printf '%s' "$SOURCE")"
 fi
+while [[ -L "$SOURCE" ]]; do
+    script_dir="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
+    tmp_link="$(readlink "$SOURCE")"
+    if [[ "$tmp_link" = /* ]]; then
+        SOURCE="$tmp_link"
+    else
+        SOURCE="$script_dir/$tmp_link"
+    fi
+done
 #LINK TO THE SCRIPT SO FIND DIRECTORY
-script_dir="$( dirname "$tmp_link" )"
-source $script_dir/bash_util.sh
+script_dir="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
+source "$script_dir/bash_util.sh"
 
 args=$@
 
@@ -164,7 +171,12 @@ for sub_dir in $bids_dir/rawdata/sub-$subj*;do
         pretty_echo "Check the bids dir $bid_dir for sub-$sub ses-$ses and run recon-all if needed" |& tee $qa_deriv/EF_pipeline.log
 
         check_bids_dir --bids_dir $bids_dir --sub $sub --ses $ses --fs_lic $fs_lic --fs_threads $fs_threads |& tee $qa_deriv/Bids_Dir_Checking_and_FreeSurfer.log
+        check_bids_status=${PIPESTATUS[0]}
 	    cat $qa_deriv/Bids_Dir_Checking_and_FreeSurfer.log >> $qa_deriv/EF_pipeline.log
+        if [[ $check_bids_status -ne 0 ]]; then
+            error_echo "Required T1 or T2 image was not found for sub-$sub ses-$ses. Exiting pipeline." |& tee -a $qa_deriv/EF_pipeline.log
+            exit $check_bids_status
+        fi
 
         pretty_echo "FINISHED checking the bids dir $bid_dir for sub-$sub ses-$ses" |& tee -a $qa_deriv/EF_pipeline.log
 
